@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Scientific Calculator</title>
+  <style>
+    body {
+      background: #121212;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .calculator {
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #000;
+      width: 350px;
+    }
+
+    #display {
+      width: 100%;
+      font-size: 2rem;
+      padding: 10px;
+      border: none;
+      background: #333;
+      color: #fff;
+      text-align: right;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      background: #2e2e2e;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #4caf50;
+    }
+
+    .equals {
+      background-color: #f44336;
+      grid-column: span 2;
+    }
+
+    .equals:hover {
+      background-color: #e53935;
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <input type="text" id="display" placeholder="0" readonly />
+    <div class="buttons">
+      <!-- Scientific Row -->
+      <button onclick="appendFunction('Math.sqrt(')">√</button>
+      <button onclick="appendFunction('Math.pow(')">x²</button>
+      <button onclick="appendFunction('Math.sin(')">sin</button>
+      <button onclick="appendFunction('Math.cos(')">cos</button>
+      <button onclick="appendFunction('Math.tan(')">tan</button>
+
+      <!-- More scientific -->
+      <button onclick="appendFunction('Math.log10(')">log</button>
+      <button onclick="appendFunction('Math.log(')">ln</button>
+      <button onclick="appendFunction('Math.PI')">π</button>
+      <button onclick="clearDisplay()">C</button>
+      <button onclick="backspace()">⌫</button>
+
+      <!-- Number and Operators -->
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button onclick="appendOperator('/')">÷</button>
+      <button onclick="appendOperator('*')">×</button>
+
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button onclick="appendOperator('-')">−</button>
+      <button onclick="appendOperator('+')">+</button>
+
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button onclick="appendNumber('.')">.</button>
+      <button onclick="appendBracket(')')">)</button>
+
+      <button onclick="appendNumber('0')" class="wide">0</button>
+      <button onclick="appendBracket('(')">(</button>
+      <button onclick="calculateResult()" class="equals">=</button>
+    </div>
+  </div>
+
+  <script>
+    let display = document.getElementById('display');
+
+    function appendNumber(num) {
+      display.value += num;
+    }
+
+    function appendOperator(op) {
+      const lastChar = display.value.slice(-1);
+      if ("+-*/".includes(lastChar)) {
+        display.value = display.value.slice(0, -1) + op;
+      } else {
+        display.value += op;
+      }
+    }
+
+    function appendFunction(func) {
+      display.value += func;
+    }
+
+    function appendBracket(bracket) {
+      display.value += bracket;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculateResult() {
+      try {
+        if (display.value === "") return;
+        let result = Function('"use strict"; return (' + display.value + ')')();
+        display.value = result;
+      } catch (e) {
+        alert("Invalid Expression");
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      const key = e.key;
+      if (!isNaN(key) || ['+', '-', '*', '/', '.', '(', ')'].includes(key)) {
+        display.value += key;
+      } else if (key === 'Enter') {
+        calculateResult();
+      } else if (key === 'Backspace') {
+        backspace();
+      } else if (key.toLowerCase() === 'c') {
+        clearDisplay();
+      }
+    });
+  </script>
+
+</body>
+</html>
